@@ -31,10 +31,10 @@ class UdpSender:
 
 
 if __name__ == '__main__':
-    config = load_config()
-    print config
-    ip = config[u"IP_Address"]
-    port = config[u"Port"]
+    cfg = load_config()
+    print cfg
+    ip = cfg[u"IP_Address"]
+    port = cfg[u"Port"]
 
     print "UDP target IP:", ip
     print "UDP target port:", port
