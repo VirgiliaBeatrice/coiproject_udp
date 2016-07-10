@@ -15,6 +15,8 @@ COMMAND_DICT = {
     u"DISCONNECT": u"ATH",
 }
 
+
+# TODO(Haoyan.Li): Adjust to current device id.
 DEV_0 = u"F5"
 DEV_1 = u"E9"
 DEV_2 = u"D9"
@@ -56,11 +58,20 @@ class SerialPort(threading.Thread):
 
     def _data_process(self):
         rev_data = self.ser.readline()
-        logger.info(rev_data[:-2])
-        pos = rev_data.find(u"VALUE:")
-        if pos != -1:
-            msg = self._data_reformat(rev_data[(pos + 6):(pos + 48)])
-            self.udp_client.send_msg(msg)
+        # TODO(Haoyan.Li): Add a validation function.
+        # pos = rev_data.find(u"VALUE:")
+        # if pos != -1:
+        #     msg = self._data_reformat(rev_data[(pos + 6):(pos + 48)])
+        #     self.udp_client.send_msg(msg)
+
+        if len(rev_data) == 65:
+            # logger.info(rev_data[:-2])
+            pos = rev_data.find(u"VALUE:")
+            if pos != -1:
+                msg = self._data_reformat(rev_data[(pos + 6):(pos + 48)])
+                self.udp_client.send_msg(msg)
+        else:
+            logger.info(u"Uncompleted data package has received.")
 
     @staticmethod
     def _half_to_float(h):
@@ -171,7 +182,7 @@ def send_cmd_seq_modified():
     ser.send_cmd(COMMAND_DICT[u"CONNECT"])
     time.sleep(3)
     # ser.receive_data()
-    ser.device_code = ser.receive_data()[4:6].decode(u"utf-8")
+    ser.device_code = ser.receive_data()[6:8].decode(u"utf-8")
     # logger.info(ser.device_code)
 
     input_string = raw_input(u"Please input device num: ").encode()

@@ -75,13 +75,13 @@ class SerialCommunicationThread(threading.Thread):
 if __name__ == '__main__':
     mode = raw_input(u"Please input mode: ")
     if int(mode) == 1:
-        msg = u"1 0xE9A8F13D5E7C -070 LAPIS_RAW1 \r\n"
+        msg = u" 1  0xE9A8F13D5E7C -070 LAPIS_RAW1 \r\n"
         port = u"COM3"
     else:
-        msg = u"1 0xF5A8F13D5E7C -070 LAPIS_RAW0 \r\n"
+        msg = u" 1  0xF5A8F13D5E7C -070 LAPIS_RAW0 \r\n"
         port = u"COM5"
 
-    thread = SerialCommunicationThread(port, 100)
+    thread = SerialCommunicationThread(port, 20)
     thread.open()
 
     raw_input(u"Waiting...")
