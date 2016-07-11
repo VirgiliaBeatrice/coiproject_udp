@@ -15,32 +15,24 @@ format_dict = {
 
 class Logger:
     def __init__(self, logname, loglevel, logger):
-        """指定保存日志的文件路径，日志级别，以及调用文件
-           将日志存入到指定的文件中
-
-        :param logname:
-        :param loglevel:
-        :param logger:
-        """
-
-        # 创建一个logger
+        # create a logger
         self.logger = logging.getLogger(logger)
         self.logger.setLevel(logging.DEBUG)
 
-        # 创建一个handler，用于写入日志文件
+        # create a handler for writing a log file
         fh = logging.FileHandler(logname)
         fh.setLevel(logging.DEBUG)
 
-        # 再创建一个handler，用于输出到控制台
+        # create a handler for outputting to console
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
 
-        # 定义handler的输出格式
+        # define output format of handler
         formatter = format_dict[int(loglevel)]
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
 
-        # 给logger添加handler
+        # Add handler to logger
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
