@@ -3,6 +3,7 @@
 
 import logging
 
+
 format_dict = {
    1: logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
    2: logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'),
@@ -12,7 +13,7 @@ format_dict = {
 }
 
 
-class Logger():
+class Logger:
     def __init__(self, logname, loglevel, logger):
         """指定保存日志的文件路径，日志级别，以及调用文件
            将日志存入到指定的文件中
@@ -43,5 +44,5 @@ class Logger():
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
-    def getlog(self):
+    def get_log(self):
         return self.logger

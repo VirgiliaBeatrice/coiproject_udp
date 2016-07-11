@@ -5,7 +5,8 @@ import serial
 import threading
 import time
 import random
-import loginstance
+
+from coiproject_lapissensor.log_instance import log_instance
 
 HEX_DICT = [
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -20,10 +21,10 @@ class SerialCommunicationThread(threading.Thread):
         self.ser = serial.Serial(port, baudrate=57600)
         self.sending_interval = sending_interval / 1000.0
         self.stop_flag = True
-        self.logger = loginstance.Logger(
+        self.logger = log_instance.Logger(
             logname=u"log.txt",
             loglevel=1,
-            logger=u"SerialInfoLog").getlog()
+            logger=u"SerialInfoLog").get_log()
 
         self.ser.flushInput()
 
@@ -59,7 +60,7 @@ class SerialCommunicationThread(threading.Thread):
             seq.append(random.choice(HEX_DICT))
         # print seq
         # print u"0x" + u"".join(seq)
-        msg = u"N  OK   0x0B06 VALUE:0x" + u"".join(seq) + u"\r\n"
+        msg = u"N  OK   0x0B06 VALUE:0x" + u"".join(seq) + u"\r\n\r\n"
         self.logger.info(u"Send: Data - " + msg[:-2])
         return msg
 
@@ -75,10 +76,10 @@ class SerialCommunicationThread(threading.Thread):
 if __name__ == '__main__':
     mode = raw_input(u"Please input mode: ")
     if int(mode) == 1:
-        msg = u" 1  0xE9A8F13D5E7C -070 LAPIS_RAW1 \r\n"
+        msg = u" 1  0xE9A8F13D5E7C -070 LAPIS_RAW1 \r\n\r\n"
         port = u"COM3"
     else:
-        msg = u" 1  0xF5A8F13D5E7C -070 LAPIS_RAW0 \r\n"
+        msg = u" 1  0xF5A8F13D5E7C -070 LAPIS_RAW0 \r\n\r\n"
         port = u"COM5"
 
     thread = SerialCommunicationThread(port, 20)

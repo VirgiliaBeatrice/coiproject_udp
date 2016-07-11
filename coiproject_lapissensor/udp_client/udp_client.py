@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf8 -*-
 
-import socket
 import json
-import loginstance
+import socket
 
-FILE_NAME = u"config.json"
+from coiproject_lapissensor.log_instance import log_instance
+
+
+FILE_NAME = u"..\config.json"
 MESSAGE = "Hello, World!"
 
 
@@ -48,10 +50,10 @@ if __name__ == '__main__':
 
     # udp_sender = UdpClient()
     # udp_sender.send_msg(MESSAGE)
-    logger = loginstance.Logger(
+    logger = log_instance.Logger(
         logname=u"udp_log",
         loglevel=1,
-        logger=u"UDPServerLog").getlog()
+        logger=u"UDPServerLog").get_log()
 
     UDP_IP = "127.0.0.1"
     UDP_PORT = 4444

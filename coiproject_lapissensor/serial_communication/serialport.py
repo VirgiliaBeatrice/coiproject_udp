@@ -3,6 +3,7 @@
 
 import serial
 
+
 COMMAND_DICT = {
     u"CONNECT": u"ATA",
     u"START": u"AT$W0B07=0100",
