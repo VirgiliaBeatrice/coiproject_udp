@@ -7,7 +7,7 @@ import socket
 from coiproject_lapissensor.log_instance import log_instance
 
 
-FILE_NAME = u"..\config.json"
+FILE_NAME = u"config.json"
 MESSAGE = "Hello, World!"
 
 

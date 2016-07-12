@@ -3,8 +3,10 @@
 
 import time
 import serial
+import sys
+import os
 
-from coiproject_lapissensor import serial_communication as serial_thread
+from coiproject_lapissensor.serial_communication import SerialPort
 
 
 COMMAND_DICT = {
@@ -38,7 +40,7 @@ def list_available_ports():
 
 def send_cmd_seq_modified():
     input_string = raw_input(u"Please input port name: ").encode()
-    ser = serial_thread.SerialPort(input_string)
+    ser = SerialPort(input_string)
     ser.open()
 
     ser.send_cmd(COMMAND_DICT[u"CONNECT"])
@@ -65,5 +67,9 @@ def send_cmd_seq_modified():
 
 
 if __name__ == '__main__':
+    currDir = os.path.dirname(os.path.realpath(__file__))
+    rootDir = os.path.abspath(os.path.join(currDir, ".."))
+    if rootDir not in sys.path:
+        sys.path.append(rootDir)
     list_available_ports()
     send_cmd_seq_modified()

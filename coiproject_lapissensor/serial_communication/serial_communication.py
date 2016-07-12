@@ -10,7 +10,7 @@ from coiproject_lapissensor.log_instance import log_instance
 from coiproject_lapissensor.udp_client import udp_client
 
 
-# TODO(Haoyan.Li): Adjust to current device id.
+# TODO(Haoyan.Li): Need to be adjusted to current device id.
 DEV_0 = u"F5"
 DEV_1 = u"E9"
 DEV_2 = u"D9"
