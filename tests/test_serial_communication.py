@@ -8,9 +8,15 @@ import random
 
 from coiproject_lapissensor.log_instance import log_instance
 
+
 HEX_DICT = [
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
     "A", "B", "C", "D", "E", "F"
+]
+
+EVENTS = [
+    u"Return Dev Info",
+    u"Return "
 ]
 
 
@@ -43,12 +49,23 @@ class SerialCommunicationThread(threading.Thread):
         self.ser.close()
 
     def receive_data(self):
-        # while self.ser.in_waiting != 0:
-        #     pass
-        #
-        # time.sleep(1)
         rev_data = self.ser.read(self.ser.in_waiting)
         self.logger.info(u"Receive: " + rev_data[:-1])
+
+
+    # TODO(Haoyan.Li): Finish this analysis code.
+    @staticmethod
+    def _analysis_data(rev_data):
+        if u"ATA" in rev_data:
+            event_code = 1
+        elif u"AT$W0B07=0100" in rev_data:
+            event_code = 2
+        elif u"AT$W0B07=0000" in rev_data:
+            event_code = 3
+        else:
+            event_code = 0
+
+        return event_code
 
     def send_msg(self, msg):
         self.ser.write(msg.encode(u"utf-8"))
