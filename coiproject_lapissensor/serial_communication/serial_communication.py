@@ -115,34 +115,26 @@ class SerialPort(threading.Thread):
         return f[0]
 
     def _data_reformat(self, hex_string):
-        return_str = DEVICES[self.device_code] + u" 00000"
-        # return_str = u"LAPIS_RAW0 00000"
-        # print type(hex_string)
-        # print hex_string
+        data_packet = [DEVICES[self.device_code], u"00000"]
+        offset = 2
+        raw_data = struct.unpack(u">10h",
+                                 hex_string[offset:].encode(u"utf-8").decode(u"hex"))
 
-        return_str += u" " + str((self._hex_to_half_float(hex_string[-4:]) / 1024.0) * 9.8)
-        return_str += u" " + str((self._hex_to_half_float(hex_string[-8:-4]) / 1024.0) * 9.8)
-        return_str += u" " + str((self._hex_to_half_float(hex_string[-12:-8]) / 1024.0) * 9.8)
+        idx = 0
+        for element in reversed(raw_data):
+            if idx in range(0, 3):
+                processed_data = float(element) * (9.8 / 1024.0)
+            elif idx in range(3, 6):
+                processed_data = float(element) / 10.0
+            elif idx in range(6, 9):
+                processed_data = float(element) / 131.0
+            else:
+                processed_data = element + 50000
+            data_packet.append(str(processed_data).decode(u"utf-8"))
 
-        # return_str += u" " + str(struct.unpack(u"h", hex_string[-16:-12].decode(u"hex"))[0] / 10.0)
-        # return_str += u" " + str(struct.unpack(u"h", hex_string[-20:-16].decode(u"hex"))[0] / 10.0)
-        # return_str += u" " + str(struct.unpack(u"h", hex_string[-24:-20].decode(u"hex"))[0] / 10.0)
+            idx += 1
 
-        return_str += u" " + str(self._hex_to_half_float(hex_string[-16:-12]) / 10.0)
-        return_str += u" " + str(self._hex_to_half_float(hex_string[-20:-16]) / 10.0)
-        return_str += u" " + str(self._hex_to_half_float(hex_string[-24:-20]) / 10.0)
-
-        # return_str += u" " + str(struct.unpack(u"h", hex_string[-28:-24].decode(u"hex"))[0] / 131.0)
-        # return_str += u" " + str(struct.unpack(u"h", hex_string[-32:-28].decode(u"hex"))[0] / 131.0)
-        # return_str += u" " + str(struct.unpack(u"h", hex_string[-36:-32].decode(u"hex"))[0] / 131.0)
-
-        return_str += u" " + str(self._hex_to_half_float(hex_string[-28:-24]) / 131.0)
-        return_str += u" " + str(self._hex_to_half_float(hex_string[-32:-28]) / 131.0)
-        return_str += u" " + str(self._hex_to_half_float(hex_string[-36:-32]) / 131.0)
-
-        return_str += u" " + u"0.0"
-
-        # print return_str
+        return_str = u" ".join(data_packet)
         self.logger.info(return_str)
         return return_str
 
@@ -161,7 +153,32 @@ class SerialPort(threading.Thread):
             self._data_process()
 
 
+def data_reformat(hex_string):
+    data_packet = [u"LAPIS_RAW0", u"00000"]
+    offset = 2
+    raw_data = struct.unpack(u">10h",
+                             hex_string[offset:].encode(u"utf-8").decode(u"hex"))
+
+    idx = 0
+    for element in reversed(raw_data):
+        if idx in range(0, 3):
+            processed_data = float(element) * (9.8 / 1024.0)
+        elif idx in range(3, 6):
+            processed_data = float(element) / 10.0
+        elif idx in range(6, 9):
+            processed_data = float(element) / 131.0
+        else:
+            processed_data = element + 50000
+        data_packet.append(str(processed_data).decode(u"utf-8"))
+
+        idx += 1
+
+    return_str = u" ".join(data_packet)
+    return return_str
+
 if __name__ == '__main__':
+    print data_reformat(u"0xA4FF48040C00FCFE96FE88FE13FE76F7F9EED3C3")
+
     pass
     # list_available_ports()
     # send_cmd_seq_modified()
