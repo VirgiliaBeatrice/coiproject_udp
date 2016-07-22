@@ -25,7 +25,7 @@ class Logger:
 
         # create a handler for outputting to console
         ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
+        ch.setLevel(logging.WARN)
 
         # define output format of handler
         formatter = format_dict[int(loglevel)]

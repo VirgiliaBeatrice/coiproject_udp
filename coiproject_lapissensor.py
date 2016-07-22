@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import time
-import serial
-import sys
-import os
 
-from coiproject_lapissensor.serial_communication import SerialPort
+from coiproject_lapissensor.serial_communication import *
 
 
 COMMAND_DICT = {
@@ -16,26 +13,7 @@ COMMAND_DICT = {
     u"DISCONNECT": u"ATH",
 }
 
-
-def list_available_ports():
-    """ List all available port names
-
-        :return:
-         A list of the serial ports now available on this system.
-    """
-    ports = [u"COM%s" % (i + 1) for i in range(16)]
-    results = []
-
-    for port in ports:
-        try:
-            s = serial.Serial(port)
-            s.close()
-            results.append(port)
-            print(u"Find {0} device.".format(port))
-        except (OSError, serial.SerialException):
-            pass
-
-    return results
+# 0xD2FFEBFFF203D6FFCF022BFD4500580029009AC5
 
 
 def send_cmd_seq_modified():
@@ -66,10 +44,78 @@ def send_cmd_seq_modified():
     ser.close()
 
 
+def send_cmd_seq():
+    input_str = raw_input(u"\r\n"
+                          u"Please input port name: ").decode(u'utf-8')
+    ser = SerialPort(input_str)
+    ser.open()
+
+    def echo_cmd():
+        input_string = raw_input(
+            u"\r\n"
+            u"1. CONNECT\r\n"
+            u"2. START\r\n"
+            u"3. END\r\n"
+            u"4. DISCONNECT\r\n"
+            u"Please select command from list: ").decode(u'utf-8')
+        if input_string in u"1":
+            ser.send_cmd(COMMAND_DICT[u"CONNECT"])
+        elif input_string in u"2":
+            ser.send_cmd(COMMAND_DICT[u"START"])
+        elif input_string in u"3":
+            ser.send_cmd(COMMAND_DICT[u"END"])
+        elif input_string in u"4":
+            ser.send_cmd(COMMAND_DICT[u"DISCONNECT"])
+
+    rev_data = None
+    while True:
+        echo_cmd()
+        time.sleep(3)
+        try:
+            rev_data = ser.receive_data()
+        except SerialPortException, e:
+            print e
+        else:
+            break
+
+    print(u"\r\n")
+    for line in rev_data[:-1]:
+        print(line)
+    input_str = raw_input(rev_data[-1]).decode(u'utf-8')
+    ser.device_code = rev_data[int(input_str) - 1].split(u" ")[1]
+    ser.send_cmd(input_str.encode(u'utf-8'))
+    # str.format(input_str)
+
+    # while True:
+    #     echo_cmd()
+    time.sleep(3)
+    try:
+        rev_data = ser.receive_data()
+    except SerialPortException, e:
+        print(e)
+    else:
+        pass
+
+    for line in rev_data[1:-1]:
+        print(line)
+    print(u"Press Enter to start.\r\n")
+    raw_input()
+    ser.send_cmd(COMMAND_DICT[u"START"])
+    ser.start()
+
+    raw_input()
+    ser.stop_flag = True
+    ser.send_cmd(COMMAND_DICT[u"END"])
+    time.sleep(3)
+    ser.send_cmd(COMMAND_DICT[u"DISCONNECT"])
+
+    time.sleep(3)
+    ser.close()
+    print(u"Process has been quited.")
+    pass
+
+
 if __name__ == '__main__':
-    currDir = os.path.dirname(os.path.realpath(__file__))
-    rootDir = os.path.abspath(os.path.join(currDir, ".."))
-    if rootDir not in sys.path:
-        sys.path.append(rootDir)
     list_available_ports()
-    send_cmd_seq_modified()
+    # send_cmd_seq_modified()
+    send_cmd_seq()
