@@ -5,16 +5,18 @@ import struct
 import threading
 import time
 import serial
+from multiprocessing import Process
 # import logging
 
 from coiproject_lapissensor.log_instance import log_instance
 from coiproject_lapissensor.udp_client import udp_client
+from coiproject_lapissensor.log_graph import log_graph
 
 
 # TODO(Haoyan.Li): Need to be adjusted to current device id.
-DEV_0 = u"F5"
-DEV_1 = u"E9"
-DEV_2 = u"D9"
+DEV_0 = u"0xF5A8F13D5E7C"
+DEV_1 = u"0xE97AB555CF07"
+DEV_2 = u"0xD9E6896B1028"
 
 DEVICES = {
     DEV_0: u"LAPIS_RAW0",
@@ -38,6 +40,10 @@ class SerialPort(threading.Thread):
             loglevel=1,
             logger=u"SerialInfoLog").get_log()
         self.ser.flushInput()
+        self.log_graph = None
+
+    def create_log_graph(self):
+        self.log_graph = log_graph.Plotter()
 
     def open(self):
         try:
@@ -70,7 +76,7 @@ class SerialPort(threading.Thread):
             pass
 
     def _data_reformat(self, hex_string):
-        data_packet = [DEVICES[self.device_code[2:4]], u"00000"]
+        data_packet = [DEVICES[self.device_code], u"00000"]
         offset = 2
         raw_data = struct.unpack(
             u"<9h1H",
@@ -84,6 +90,8 @@ class SerialPort(threading.Thread):
         for element in raw_data:
             if idx in range(0, 3):
                 processed_data = (float(element) / 1024.0) * 9.8
+                if idx == 0:
+                    self.log_graph.ring_buffer.append(processed_data)
             elif idx in range(3, 6):
                 processed_data = float(element) / 10.0
             elif idx in range(6, 9):
@@ -132,7 +140,10 @@ class SerialPort(threading.Thread):
 
     def run(self):
         self.stop_flag = False
+        # log_th = Process(target=self.create_log_graph())
+        # log_th.start()
         while not self.stop_flag:
+            # self.log_graph.start()
             self._data_process()
 
 
