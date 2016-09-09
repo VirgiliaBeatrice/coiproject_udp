@@ -10,7 +10,7 @@ from multiprocessing import Process
 
 from coiproject_lapissensor.log_instance import log_instance
 from coiproject_lapissensor.udp_client import udp_client
-from coiproject_lapissensor.log_graph import log_graph
+# from coiproject_lapissensor.log_graph import log_graph
 
 
 # TODO(Haoyan.Li): Need to be adjusted to current device id.
@@ -40,10 +40,10 @@ class SerialPort(threading.Thread):
             loglevel=1,
             logger=u"SerialInfoLog").get_log()
         self.ser.flushInput()
-        self.log_graph = None
+        # self.log_graph = None
 
-    def create_log_graph(self):
-        self.log_graph = log_graph.Plotter()
+    # def create_log_graph(self):
+    #     self.log_graph = log_graph.Plotter()
 
     def open(self):
         try:
@@ -72,6 +72,7 @@ class SerialPort(threading.Thread):
                 pass
             else:
                 self.logger.warn(u"Uncompleted data package has received.")
+                self.logger.warn(rev_data)
         else:
             pass
 
@@ -82,7 +83,7 @@ class SerialPort(threading.Thread):
             u"<9h1H",
             hex_string[offset:].encode(u"utf-8").decode(u"hex")
         )
-        self.logger.debug(raw_data)
+        # self.logger.debug(raw_data)
 
         idx = 0
         # for element in reversed(raw_data):
@@ -90,8 +91,8 @@ class SerialPort(threading.Thread):
         for element in raw_data:
             if idx in range(0, 3):
                 processed_data = (float(element) / 1024.0) * 9.8
-                if idx == 0:
-                    self.log_graph.ring_buffer.append(processed_data)
+                # if idx == 0:
+                #     self.log_graph.ring_buffer.append(processed_data)
             elif idx in range(3, 6):
                 processed_data = float(element) / 10.0
             elif idx in range(6, 9):
@@ -138,13 +139,15 @@ class SerialPort(threading.Thread):
                 else:
                     raise SerialPortException(u"Cannot find any valid device.")
 
-    def run(self):
+    def run_test(self):
         self.stop_flag = False
         # log_th = Process(target=self.create_log_graph())
         # log_th.start()
         while not self.stop_flag:
             # self.log_graph.start()
+            # print(u"Start to process.\r\n")
             self._data_process()
+            # time.sleep(0.5)
 
 
 class SerialPortException(Exception):

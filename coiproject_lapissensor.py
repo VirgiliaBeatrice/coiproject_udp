@@ -101,7 +101,8 @@ def send_cmd_seq():
     print(u"Press Enter to start.\r\n")
     raw_input()
     ser.send_cmd(COMMAND_DICT[u"START"])
-    ser.start()
+    while True:
+        ser.run_test()
 
     raw_input()
     ser.stop_flag = True
