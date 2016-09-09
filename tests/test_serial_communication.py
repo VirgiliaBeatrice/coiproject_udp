@@ -51,7 +51,7 @@ class SerialCommunicationThread(threading.Thread):
     def receive_data(self):
         rev_data = self.ser.read(self.ser.in_waiting)
         self.logger.info(u"Receive: " + rev_data[:-1])
-
+        return rev_data
 
     # TODO(Haoyan.Li): Finish this analysis code.
     @staticmethod
@@ -91,16 +91,22 @@ class SerialCommunicationThread(threading.Thread):
 
 
 if __name__ == '__main__':
+    port = raw_input(u"Please input port: ").encode()
     mode = raw_input(u"Please input mode: ")
+
     if int(mode) == 1:
-        msg = u" 1  0xE9A8F13D5E7C -070 LAPIS_RAW1 \r\n\r\n"
-        port = u"COM3"
+        msg = u"1 0xF5A8F13D5E7C -070 LAPIS_RAW0 \r\n\r\n"
+    elif int(mode) == 2:
+        msg = u"1 0xE9A8F13D5E7C -070 LAPIS_RAW1 \r\n\r\n"
     else:
-        msg = u" 1  0xF5A8F13D5E7C -070 LAPIS_RAW0 \r\n\r\n"
-        port = u"COM5"
+        msg = u"1 0xD9A8F13D5E7C -070 LAPIS_RAW2 \r\n\r\n"
 
     thread = SerialCommunicationThread(port, 20)
     thread.open()
+
+    flag = True
+    # while flag:
+    #     thread.
 
     raw_input(u"Waiting...")
     thread.receive_data()

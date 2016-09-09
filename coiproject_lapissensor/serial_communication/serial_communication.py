@@ -17,17 +17,18 @@ from coiproject_lapissensor.udp_client import udp_client
 DEV_0 = u"0xF5A8F13D5E7C"
 DEV_1 = u"0xE97AB555CF07"
 DEV_2 = u"0xD9E6896B1028"
+DEV_3 = u"0xFCFB58403251"
 
 DEVICES = {
     DEV_0: u"LAPIS_RAW0",
     DEV_1: u"LAPIS_RAW1",
     DEV_2: u"LAPIS_RAW2",
+    DEV_3: u"LAPIS_RAW3"
 }
 
 
 class SerialPort(threading.Thread):
     """Create a thread to open a serial port"""
-
     def __init__(self, port, baud_rate=57600, timeout=100):
         super(SerialPort, self).__init__()
         self.ser = serial.Serial(port, baud_rate)
