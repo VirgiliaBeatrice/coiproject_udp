@@ -55,7 +55,7 @@ if __name__ == '__main__':
         loglevel=1,
         logger=u"UDPServerLog").get_log()
 
-    UDP_IP = "127.0.0.1"
+    UDP_IP = "192.168.91.213"
     UDP_PORT = 4444
 
     sock = socket.socket(socket.AF_INET,  # Internet
