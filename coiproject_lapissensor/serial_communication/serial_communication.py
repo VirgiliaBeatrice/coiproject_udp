@@ -36,6 +36,7 @@ class SerialPort(threading.Thread):
         self.udp_client = udp_client.UdpClient()
         self.device_code = u""
         self.stop_flag = True
+        self.receive_status_count = 0
         self.logger = log_instance.Logger(
             logname=u"Receive_log.txt",
             loglevel=1,
@@ -75,6 +76,9 @@ class SerialPort(threading.Thread):
                 self.logger.warn(u"Uncompleted data package has received.")
                 self.logger.warn(rev_data)
         else:
+            # self.receive_status_count += 1
+            # if self.receive_status_count > 10000:
+            #
             pass
 
     def _data_reformat(self, hex_string):

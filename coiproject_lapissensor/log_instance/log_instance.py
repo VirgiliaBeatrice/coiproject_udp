@@ -25,7 +25,7 @@ class Logger:
 
         # create a handler for outputting to console
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        ch.setLevel(logging.WARNING)
 
         # define output format of handler
         formatter = format_dict[int(loglevel)]
@@ -33,7 +33,7 @@ class Logger:
         ch.setFormatter(formatter)
 
         # Add handler to logger
-        # self.logger.addHandler(fh)
+        self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
     def get_log(self):
